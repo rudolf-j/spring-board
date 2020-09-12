@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.mapper.BoardMapper">
+
+	<insert id="insertBoard" parameterType="Board">
+		insert into board(title, writer, content) values(#{title}, #{writer}, #{content})
+	</insert>
+	
+	<update id="updateBoard" parameterType="Board">
+		update board set title=#{title}, content=#{content}, updatedate=sysdate(), hit=#{hit} where bno=#{bno}
+	</update>
+	
+	<delete id="deleteBoard">
+		delete from board where bno=#{bno}
+	</delete>
+	
+	<select id="selectBoardByKeyword" parameterType="Page" resultType="Board">
+		<bind name="text" value="'%'+keyword+'%'"/>
+		select * from board
+			<choose>
+				<when test="option.equals('title')">
+					where title like #{text}
+				</when>
+				<when test="option.equals('writer')">
+					where writer like #{text}
+				</when>
+				<when test="option.equals('title_writer')">
+					where title like #{text}
+					or writer like #{text}
+				</when>
+			</choose>
+		order by bno desc limit #{startItem}, #{PAGE_SIZE}
+	</select>
+	
+	<select id="selectOne" resultType="Board">
+		select * from board where bno=#{bno}
+	</select>
+	
+	<select id="selectBoardList" parameterType="Page" resultType="Board">
+		select * from board order by bno desc limit #{startItem}, #{PAGE_SIZE}
+	</select>
+	
+	<select id="getRowCount" parameterType="Page" resultType="int">
+		<bind name="text" value="'%'+keyword+'%'"/>
+		select count(*) from board
+			<choose>
+				<when test="option.equals('title')">
+					where title like #{text}
+				</when>
+				<when test="option.equals('writer')">
+					where writer like #{text}
+				</when>
+				<when test="option.equals('title_writer')">
+					where title like #{text}
+					or writer like #{text}
+				</when>
+			</choose>
+	</select>
+	
+</mapper>
