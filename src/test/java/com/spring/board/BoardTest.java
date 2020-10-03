@@ -31,10 +31,10 @@ public class BoardTest {
 	@Test
 	void insert() {
 		
-		for(int i = 0; i < 30; i++) {
+		for(int i = 0; i < 50; i++) {
 			Board board = new Board();
 			board.setTitle("title"+i);
-			board.setWriter("user"+i);
+			board.setWriter("user"+i%5);
 			board.setContent("content"+i);
 			dao.insert(board);
 		}
@@ -75,10 +75,10 @@ public class BoardTest {
 	@Test
 	void search() {
 //		List<Board> list = boardService.searchBoard("title", "title2", 2);
-		List<Board> list = boardService.searchBoard("title", "", 1);
-		for(Board board : list) {			
-			log.info(""+board);
-		}
+//		List<Board> list = boardService.searchBoard("title", "", 1);
+//		for(Board board : list) {			
+//			log.info(""+board);
+//		}
 	}
 
 }

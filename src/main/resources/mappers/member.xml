@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.mapper.MemberMapper">
+	<select id="selectById" resultType="Member">
+		select u.username, u.password, r.rolename
+		from users u
+		left join user_roles r
+		on u.username = r.username 
+		where u.username = #{username}
+	</select>
+	<insert id="addMember" parameterType="Member">
+		insert into users(username, password) values(#{username}, #{password})
+	</insert>
+	<insert id="addRole" parameterType="Member">
+		insert into user_roles(rolename, username) values(#{rolename}, #{username})
+	</insert>
+	
+	<select id="findAllMemberById" resultType="Member">
+		select u.username, u.password, r.rolename
+		from users u
+		left join user_roles r
+		on u.username = r.username
+		where u.username in
+		<foreach item="item" index="idx" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach> 
+	</select>
+	<update id="update" parameterType="Member">
+		update users set password = #{password} where username = #{username}
+	</update>
+</mapper>

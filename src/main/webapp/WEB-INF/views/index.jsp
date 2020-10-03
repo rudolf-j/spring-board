@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,8 +23,20 @@ header{
 	display: flex;
 	align-items: center;
 }
+.login-section a{
+	margin-left: 5px;
+}
+.user{
+	font-size: 18px;
+	margin-right: 20px;
+	color: #34495e;
+	text-shadow: 0 1px #34495e;
+}
 table{
 	text-align: center;
+}
+tbody tr{
+	cursor: pointer;
 }
 .search-section{
 	display: flex;
@@ -48,8 +61,18 @@ table{
 				<h1>simple board<small class="text-muted">[spring+myBatis]</small></h1>
 			</section>
 			<section class="login-section">
-				<a href="/" class="btn btn-primary">login</a>
-				<a href="/" class="btn btn-primary">logout</a>
+				<sec:authorize var="isAuthenticated" access="isAuthenticated()" />
+				<c:if test="${!isAuthenticated}">
+					<a href="/signUp" class="btn btn-primary">signUp</a>
+					<a href="/login" class="btn btn-primary">login</a>
+				</c:if>
+				<c:if test="${isAuthenticated}">
+					<span class="user">welcome <sec:authentication property="principal.username"/></span>
+					<form action="/logout" method="post">
+						<sec:csrfInput/>
+						<a href="#" class="btn btn-primary" onclick="this.parentNode.submit()">logout</a>
+					</form>
+				</c:if>
 			</section>
 		</header>
 		<div class="content">
@@ -78,7 +101,9 @@ table{
 				<tfoot>
 					<tr>
 						<td colspan="5" style="text-align: right;">
-							<a href="/" class="btn btn-primary">글 작성</a>
+						<sec:authorize access="isAuthenticated()">
+							<a href="/writeForm" class="btn btn-primary">글 작성</a>
+						</sec:authorize>
 						</td>
 					</tr>
 				</tfoot>
@@ -130,10 +155,10 @@ table{
 		
 		searchBtn.addEventListener("click", searchList);
 		$(".page-link").on("click", movePage);		
-		$("tr").on("click", readContent);
+		$("tbody > tr").on("click", readContent);
 		
 		function readContent(e){
-			console.log(e.currentTarget);
+			location.href = "/viewContent/"+e.currentTarget.children[0].innerText;
 		}
 
 
@@ -152,21 +177,6 @@ table{
 			formObj.elements.currentPage.value = "1";
 			formObj.submit();
 		}
-
-		/* function printResult(xhr){
-			searchBar.value = "";
-			$("tbody").empty();
-			$.each(xhr, function(idx, item){
-				$("<tr>").on("click", readContent)
-					.append($("<td>").html(item.bno))
-					.append($("<td>").html(item.title))
-					.append($("<td>").html(item.writer))
-					.append($("<td>").html(item.hit))
-					.append($("<td>").html(item.regdate.substring(0,10)))
-					.append($("<input type='hidden'>").val(item.bno))
-					.appendTo($("tbody"));
-			});
-		} */
 	</script>
 </body>
 </html>
