@@ -62,6 +62,7 @@ header{
 			<br>
 		</div>
 		<form class="f1" action="/modifyForm" method="post">
+			<sec:csrfInput/>
 			<input type="hidden" name="bno" value="${board.bno}">
 			<input type="hidden" name="title" value="${board.title}">
 			<input type="hidden" name="writer" value="${board.writer}">
